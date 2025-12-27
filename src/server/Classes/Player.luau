@@ -26,6 +26,10 @@ function Player.takeDamage(self, damage)
 	self.Health = math.max(self.Health - damage, 0)
 end
 
+function Player.attack(self, target)
+	target:takeDamage(self.AttackPoints)
+end
+
 function Player.levelUp(self)
 	self.Level = self.Level + 1
 	self.Health = self.Health + 20
@@ -47,6 +51,10 @@ function Player.getStats(self)
 		Level = self.Level,
 		Xp = self.Xp,
 	}
+end
+
+function Player.isAlive(self)
+	return self.Health > 0
 end
 
 return Player

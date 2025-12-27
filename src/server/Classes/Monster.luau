@@ -18,3 +18,30 @@ function Monster.new(monsterType)
 	self.ExperiencePoints = t.ExperiencePoints
 	return self
 end
+
+function Monster.takeDamage(self, damage)
+	self.Health = math.max(self.Health - damage, 0)
+end
+
+function Monster.isAlive(self)
+	return self.Health > 0
+end
+
+function Monster.getExperience(self)
+	return self.ExperiencePoints
+end
+
+function Monster.attack(self, target)
+	target:takeDamage(self.AttackPoints)
+end
+
+function Monster.getStats(self)
+	return {
+		Type = self.Type,
+		Health = self.Health,
+		AttackPoints = self.AttackPoints,
+		ExperiencePoints = self.ExperiencePoints,
+	}
+end
+
+return Monster
