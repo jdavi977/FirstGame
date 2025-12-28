@@ -5,6 +5,10 @@ local Players = game:GetService("Players")
 local PlayerService = {}
 local playerStates = {}
 
+function PlayerService.getPlayerState(player)
+	return playerStates[player]
+end
+
 function PlayerService.start()
 	Players.PlayerAdded:Connect(function(player)
 		local state = PlayerClass.new(player)

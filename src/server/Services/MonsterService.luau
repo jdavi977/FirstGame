@@ -9,4 +9,14 @@ function MonsterService.spawn(monsterType: string)
 	return monster
 end
 
+function MonsterService.startSpawner(amount, monsterType)
+	local currentCount = 0
+	while currentCount < amount do
+		local index = math.random(1, #monsterType)
+		MonsterService.spawn(monsterType[index])
+		currentCount = currentCount + 1
+		task.wait(1)
+	end
+end
+
 return MonsterService
