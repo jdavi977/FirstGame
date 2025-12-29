@@ -1,18 +1,20 @@
 local BattleService = {}
 
 function BattleService.defeatReward(player, monster)
-	player.addXp(monster:getExperience())
+	print("Player defeated monster and gained experience")
+	player:addXp(monster:getExperience())
 end
 
 function BattleService.startBattle(player, monster)
 	print("Battle Started")
-	while player.isAlive() and monster.isAlive do
+	while player:isAlive() and monster:isAlive() do
 		monster:takeDamage(player.AttackPoints)
-		if monster.isAlive() then
+		if monster:isAlive() then
 			player:takeDamage(monster.AttackPoints)
-			if not monster.isAlive() then
-				BattleService.defeatReward(player, monster)
-			end
+			task.wait(2)
+		end
+		if not monster:isAlive() then
+			BattleService.defeatReward(player, monster)
 		end
 	end
 	print("Battle ended")
