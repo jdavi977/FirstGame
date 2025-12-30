@@ -1,3 +1,6 @@
+local ServerScriptService = game:GetService("ServerScriptService")
+local types = require(ServerScriptService.Server.Engine.Types)
+
 local Player = {}
 
 -- Allows Player.methods to be called on Player instances
@@ -8,6 +11,13 @@ function Player.new(player)
 
 	self.UserId = player.UserId
 	self.Name = player.Name
+
+	-- self.CombatStats = {
+	-- 	Health = 100,
+	-- 	AttackPoints = 10,
+	-- 	Level = 1,
+	-- 	Xp = 0,
+	-- }
 
 	self.Health = 100
 	self.AttackPoints = 10

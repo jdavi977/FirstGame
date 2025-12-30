@@ -6,7 +6,6 @@ local PlayerService = require(ServerScriptService.Server.Services.PlayerService)
 local BattleService = require(ServerScriptService.Server.Services.BattleService)
 
 local MonsterService = {}
-
 local activeMonsters = {}
 
 local function moveToRandomLocation(dimensionName: string, monsterModel: Model)
@@ -41,6 +40,8 @@ function MonsterService.spawn(monsterType: string)
 	local monsterModel = template:Clone()
 	local monsterId = newId()
 
+	local partIsTouched = false
+
 	activeMonsters[monsterId] = {
 		state = monsterState,
 		model = monsterModel,
@@ -54,29 +55,42 @@ function MonsterService.spawn(monsterType: string)
 	assert(hitbox, "Monster model must have a Hitbox or PrimaryPart")
 
 	hitbox.Touched:Connect(function(otherPart)
-		local character = otherPart:FindFirstAncestorOfClass("Model")
-		if not character then
-			return
-		end
+		if not partIsTouched then
+			print("Processing touch")
+			partIsTouched = true
 
-		local player = game.Players:GetPlayerFromCharacter(character)
-		if not player then
-			return
-		end
+			local character = otherPart:FindFirstAncestorOfClass("Model")
+			if not character then
+				partIsTouched = false
+				return
+			end
 
-		local playerState = PlayerService.getPlayerState(player)
-		if not playerState or not playerState:isAlive() then
-			return
-		end
+			local player = game.Players:GetPlayerFromCharacter(character)
+			if not player then
+				partIsTouched = false
+				return
+			end
 
-		BattleService.startBattle(playerState, monsterState)
-		if not monsterState:isAlive() then
-			MonsterService.despawn(monsterId)
+			local playerState = PlayerService.getPlayerState(player)
+
+			if not playerState or not playerState:isAlive() then
+				partIsTouched = false
+				return
+			end
+
+			BattleService.startBattle(playerState, monsterState)
+			if not monsterState:isAlive() then
+				MonsterService.despawn(monsterId)
+			end
+
+			task.wait(5)
+			partIsTouched = false
 		end
 	end)
 
 	moveToRandomLocation("SpawnZone", monsterModel)
-	print("Spawned monster" .. monsterType)
+	print("Spawned monster: " .. monsterType)
+	print(monsterState:getStats())
 
 	return monsterId
 end
