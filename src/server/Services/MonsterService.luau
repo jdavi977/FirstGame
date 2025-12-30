@@ -2,7 +2,6 @@ local CollectionService = game:GetService("CollectionService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local MonsterClass = require(ServerScriptService.Server.Classes.Monster)
-local PlayerService = require(ServerScriptService.Server.Services.PlayerService)
 local BattleService = require(ServerScriptService.Server.Services.BattleService)
 
 local MonsterService = {}
@@ -55,30 +54,15 @@ function MonsterService.spawn(monsterType: string)
 	assert(hitbox, "Monster model must have a Hitbox or PrimaryPart")
 
 	hitbox.Touched:Connect(function(otherPart)
-		if not partIsTouched then
-			print("Processing touch")
+		local humanoid = otherPart.Parent:FindFirstChild("Humanoid")
+
+		if not partIsTouched and humanoid then
+			local characterName = otherPart.Parent
+			local player = game.Players:GetPlayerFromCharacter(characterName)
 			partIsTouched = true
 
-			local character = otherPart:FindFirstAncestorOfClass("Model")
-			if not character then
-				partIsTouched = false
-				return
-			end
+			BattleService.startBattle(player, monsterState)
 
-			local player = game.Players:GetPlayerFromCharacter(character)
-			if not player then
-				partIsTouched = false
-				return
-			end
-
-			local playerState = PlayerService.getPlayerState(player)
-
-			if not playerState or not playerState:isAlive() then
-				partIsTouched = false
-				return
-			end
-
-			BattleService.startBattle(playerState, monsterState)
 			if not monsterState:isAlive() then
 				MonsterService.despawn(monsterId)
 			end

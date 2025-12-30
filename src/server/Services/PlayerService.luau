@@ -21,4 +21,11 @@ function PlayerService.start()
 	end)
 end
 
+function PlayerService.death(player)
+	local name = player.DisplayName
+	local character = workspace[name]
+	local humanoid = character:FindFirstChild("Humanoid")
+	humanoid.Health = 0
+end
+
 return PlayerService

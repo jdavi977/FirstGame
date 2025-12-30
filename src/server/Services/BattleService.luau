@@ -1,23 +1,28 @@
+local ServerScriptService = game:GetService("ServerScriptService")
+local PlayerService = require(ServerScriptService.Server.Services.PlayerService)
+
 local BattleService = {}
 
-function BattleService.defeatReward(player, monster)
+function BattleService.defeatReward(player, monsterState)
 	print("Player defeated monster and gained experience")
-	player:addXp(monster:getExperience())
+	player:addXp(monsterState:getExperience())
 end
 
-function BattleService.startBattle(player, monster)
+function BattleService.startBattle(player, monsterState)
+	local playerState = PlayerService.getPlayerState(player)
 	print("Battle Started")
-	while player:isAlive() and monster:isAlive() do
-		print("Monster health: " .. monster.Health)
-		monster:takeDamage(player.AttackPoints)
-		if monster:isAlive() then
-			player:takeDamage(monster.AttackPoints)
-			if not player:isAlive() then
+	while playerState:isAlive() and monsterState:isAlive() do
+		print("Monster health: " .. monsterState.Health)
+		monsterState:takeDamage(playerState.AttackPoints)
+		if monsterState:isAlive() then
+			playerState:takeDamage(monsterState.AttackPoints)
+			if not playerState:isAlive() then
 				print("Player has been defeated!")
+				PlayerService.death(player)
 			end
 		end
-		if not monster:isAlive() then
-			BattleService.defeatReward(player, monster)
+		if not monsterState:isAlive() then
+			BattleService.defeatReward(playerState, monsterState)
 		end
 		task.wait(1)
 	end
